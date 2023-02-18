@@ -5,7 +5,7 @@ const userSchema = new Schema({
     fullName: {type: String, required: true,},
     userName: {type: String, required: true},
     email: {type: String, required: true, lowercase: true, trim: true, unique: true, match     : [/.+\@.+\..+/]},
-    profilePic: {type: String, required: true, trim: true, unique: true},
+    profilePic: {type: String},
     password: {type: String, required: true},
 },
 {timestamps: true}
