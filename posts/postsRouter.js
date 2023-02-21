@@ -1,0 +1,17 @@
+import  express  from "express";
+import isAuth from "../auth/session.js";
+const postsRouter = express.Router()
+import postsController from "./postsController.js";
+
+postsRouter.get("/", postsController.listAllPosts);
+postsRouter.post("/", isAuth, postsController.createNewPost);
+postsRouter.get("/find/:query", postsController.findByTitle);
+
+
+
+
+
+
+
+
+export default postsRouter

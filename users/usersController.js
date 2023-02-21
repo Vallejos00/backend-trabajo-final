@@ -1,5 +1,6 @@
 import User from "./usersModel.js"
 import handlePass from "../utils/handlePassword.js"
+import token from "../utils/handleJWT.js"
 
 const getAllUsers = (req, res, next) => {
 User.find().
@@ -28,6 +29,31 @@ const createUser = async(req, res) => {
         res.status(200).json(newUser)
     }
  })
+}
+
+const loginUser = async (req, res, next) => {
+  const user = await User.find().where({userName: req.body.userName})
+  if(!user.length) {
+    let error = new Error("Username or password invalid")
+    error.status = 401
+    return next(error)
+  } 
+  const hashedPassword = user[0].password
+  const match = await handlePass.checkPass(req.body.password, hashedPassword)
+  if(!match){
+    let error = new Error("Username or password invalid")
+    error.status = 401
+     return next(error) 
+  }
+  //token
+ const userToken = {
+  fullName: user[0].fullName,
+  userName: user[0].userName,
+  
+ }
+
+  const accesToken = await token.tokenSign(userToken, "1h")
+  res.status(200).json({message: "Se pudo acceder correctamente", token: accesToken, user: userToken})
 }
 
 const editUser = async (req, res, next) => {
@@ -60,6 +86,7 @@ const usersController = {
     getAllUsers,
     deleteUser,
     createUser,
+    loginUser,
     editUser
 }
 
