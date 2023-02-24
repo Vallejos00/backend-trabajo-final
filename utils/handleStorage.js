@@ -22,12 +22,12 @@ const uploadPic = multer({
         file.mimetype == "image/png" ||
         file.mimetype == "image/jpg" ||
         file.mimetype == "image/jpeg" ||
-        !file
+        !file  
       ) {
         cb(null, true);
       } else {
         cb(null, false);
-        return cb(new Error("Warning: .png, .jpg and .jpeg format allowed!"));
+        return cb(new Error("Warning: Only .png, .jpg and .jpeg format allowed!"));
       }
     },
   });

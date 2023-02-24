@@ -57,13 +57,19 @@ const loginUser = async (req, res, next) => {
 }
 
 const editUser = async (req, res, next) => {
-    try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-          new: true,
-        });
+    try {  
+      let profilePic = "";
+      if (req.file) {
+        profilePic = `http://localhost:3030/storage/${req.file.filename}`;
+      }
+      console.log(req.body);
+      
+      const user = await User.findByIdAndUpdate( req.params.id, req.body, { new: true }, );
+      console.log(req.body.profilePic);
+      
         res.status(200).json({ message: "usuario con cambios", usuario: user });
       } catch (error) {
-        next();
+        console.log(error);
       }
     };
 

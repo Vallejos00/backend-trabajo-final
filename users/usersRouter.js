@@ -7,7 +7,7 @@ const usersRouter = express.Router()
 usersRouter.get("/", usersController.getAllUsers)
 usersRouter.post("/", uploadPic.single("profilePic"), usersController.createUser)
 usersRouter.post("/login", usersController.loginUser )
-usersRouter.put("/:id", usersController.editUser)
+usersRouter.put("/:id", uploadPic.single("profilePic"), usersController.editUser)
 usersRouter.delete("/:id", usersController.deleteUser) 
 
 
