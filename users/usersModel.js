@@ -11,7 +11,7 @@ const userSchema = new Schema({
 {timestamps: true}
 );
 
-userSchema.set("toJSON", {
+userSchema.set("toJSON", {  
     transform(doc, ret) {       
         ret.id = ret._id
         delete ret._id  

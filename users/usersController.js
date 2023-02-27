@@ -68,55 +68,54 @@ const loginUser = async (req, res, next) => {
 const editUserData = async (req, res, next) => {
     try {    
         const user = await User.findByIdAndUpdate( req.params.id, req.body, { new: true }, );
+        console.log(req.body);
         res.status(200).json({ message: "usuario con cambios", usuario: user });
       } catch (error) {
-        next();
-        
+        next();   
       }
     };
 
     const editUserPic = async (req, res, next) => {
-      try {  
-        let profilePic = "";
-        if (req.file) {
-          profilePic = `http://localhost:3030/storage/${req.file.filename}`;
-        }
-        
-        const user = await User.findByIdAndUpdate( req.params.id, req.file.filename, { new: true }, );
-        console.log(req.file);
-        
-        
-          res.status(200).json({ message: "imagen actualizada", usuario: user});
-        } catch (error) {
-          console.log(error);
-          
-        }
+   try {
+     let newProfilePic = req.body
+     if(req.file && req.file.filename){
+       newProfilePic.profilePic = `http://localhost:3030/storage/${req.file.filename}`
+      const user = await User.findByIdAndUpdate( req.params.id, newProfilePic, { new: true }, )
+      
+       res.status(200).json({ message: "usuario con cambios", usuario: user });
+     } else {
+      newProfilePic.profilePic = ""
+      const user = await User.findByIdAndUpdate( req.params.id, newProfilePic, { new: true }, );
+      res.status(200).json({ message: "usuario con cambios", usuario: user });
+    }
+
+   } catch(error){
+     next(error)
+   }
       };
 
-const deleteUser = async (req, res, next) => {
- 
-        const user = await User.findByIdAndDelete(req.params.id);
+      const deleteUser = async (req, res, next) => {
         
+        const user = await User.findByIdAndDelete(req.params.id);
+        if (!user.profilePic.length) return res.json({message: "Usuario eliminado"})
         
         function obtenerSubcadena(str) {
          let index = str.indexOf("storage")
          if (index != -1) {
           return str.substring(index)
-         } else {
-          return "no se encontró subcadena 'public' en el string "
+        } else {
+          return next()
          }
         }
-   
-        const pathPic = `public/${obtenerSubcadena(user.profilePic)} `
-        console.log("pathpic: " + pathPic);
+        
+        const pathPic = `public/${obtenerSubcadena(user.profilePic)}`
+        
+        
         fs.unlink(pathPic, (err) => { 
-          if (err) throw err
+          if (err) return console.log("No hay Imagen");;
           console.log("user picture deleted");
+          res.json({message: "Usuario eliminado"})
         })
-        if (!user) {
-          return next(error)
-        }
-        res.json({message: "Usuario eliminado"})
 }
 
 
