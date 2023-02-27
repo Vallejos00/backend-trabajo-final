@@ -5,7 +5,7 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const pathStorage = `${__dirname}/../public/storage`;
+        const pathStorage = `${__dirname}../public/storage`;
         cb(null, pathStorage);
       },
       filename: (req, file, cb) => {
