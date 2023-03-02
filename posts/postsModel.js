@@ -6,10 +6,14 @@ const PostSchema = Schema({
     body: { type: String, required: true },
     author: {type: mongoose.Types.ObjectId, required: true},
     date: { type: Date, default: Date.now },
-    algo: { type: String}
+   
 },
 { timestamps: true },
 )
+
+PostSchema.index({ title: "text" });
+
+
 const Post = model("Post", PostSchema);
 
 

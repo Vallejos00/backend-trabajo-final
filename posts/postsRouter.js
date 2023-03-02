@@ -5,7 +5,7 @@ import postsController from "./postsController.js";
 
 postsRouter.get("/", postsController.listAllPosts);
 postsRouter.post("/", isAuth, postsController.createNewPost);
-postsRouter.get("/find/:query", postsController.findByTitle);
+postsRouter.get("/:query", postsController.findByTitle);
 
 
 

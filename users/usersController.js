@@ -3,15 +3,12 @@ import handlePass from "../utils/handlePassword.js"
 import token from "../utils/handleJWT.js"
 import fs from "fs"
 
-const getAllUsers = (req, res, next) => {
-User.find().
-then((data) => {
-    !data.length ? next() : res.status(200).json(data);
-    })
-    .catch((error) => {
-      error.status = 500;
-      next(error);
-    });
+const getAllUsers = async(req, res, next) => {
+const data = await User.find()
+if(!data.length){
+  return next()
+}
+res.json(data)
 }
 
 const createUser = async(req, res, next) => {
@@ -76,6 +73,23 @@ const editUserData = async (req, res, next) => {
     };
 
     const editUserPic = async (req, res, next) => {
+      const user = await User.findById(req.params.id)
+      function obtenerSubcadena(str) {
+        let index = str.indexOf("storage")
+        if (index != -1) {
+         return str.substring(index)
+       } else {
+         return next()
+        }
+       }
+       const pathPic = `public/${obtenerSubcadena(user.profilePic)}`
+       fs.unlink(pathPic, (err) => { 
+        if (err) return console.log("No hay Imagen");;
+        console.log("user picture deleted");
+      })
+
+
+
    try {
      let newProfilePic = req.body
      if(req.file && req.file.filename){
@@ -112,7 +126,7 @@ const editUserData = async (req, res, next) => {
         
         
         fs.unlink(pathPic, (err) => { 
-          if (err) return console.log("No hay Imagen");;
+          if (err) return next();;
           console.log("user picture deleted");
           res.json({message: "Usuario eliminado"})
         })
