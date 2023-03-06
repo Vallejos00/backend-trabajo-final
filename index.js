@@ -29,7 +29,7 @@ api.listen(PORT, (err) => {
 api.use((req, res, next) => {
     console.log("404 handler");
     let error = new Error();
-    error.message = "Resource Not Found";
+    error.message = "Recurso no encontrado";
     error.status = 404;
     next(error);
   });

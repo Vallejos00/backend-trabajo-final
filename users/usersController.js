@@ -40,14 +40,14 @@ const createUser = async(req, res, next) => {
 const loginUser = async (req, res, next) => {
   const user = await User.find().where({userName: req.body.userName})
   if(!user.length) {
-    let error = new Error("Username or password invalid")
+    let error = new Error("Usuario o contraseña inválido")
     error.status = 401
     return next(error)
   } 
   const hashedPassword = user[0].password
   const match = await handlePass.checkPass(req.body.password, hashedPassword)
   if(!match){
-    let error = new Error("Username or password invalid")
+    let error = new Error("Usuario o contraseña inválido")
     error.status = 401
      return next(error) 
   }
