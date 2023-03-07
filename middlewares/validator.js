@@ -1,4 +1,6 @@
 import { check, validationResult } from "express-validator";
+
+
 const registerValidator = [
 check("fullName")
 .trim().notEmpty().withMessage("Este campo no puede estar vacío")
@@ -46,6 +48,29 @@ const editValidator = [
     }
     ]
 
+const resetPassword = [
+      check("password_1")
+        .exists()
+        .isLength({ min: 8, max: 16 })
+        .withMessage("Between 8 and 16 characters")
+        .trim(),
+      check("password_2").custom(async (password_2, { req }) => {
+        if (req.body.password_1 !== password_2) {
+          throw new Error("Passwords must be identical");
+        }
+      }),
+      (req, res, next) => {
+        const token = req.params.token;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+          const arrWarnings = errors.array();
+          res.render("resetPass", { arrWarnings, token });
+        } else {
+          return next();
+        }
+      },
+    ];
 
 
-export {registerValidator, editValidator}
+
+export {registerValidator, editValidator, resetPassword}

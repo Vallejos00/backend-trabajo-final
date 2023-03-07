@@ -5,6 +5,8 @@ import express from "express"
 import cors from "cors"
 import usersRouter from "./users/usersRouter.js"
 import postsRouter from './posts/postsRouter.js';
+import exphbs from "express-handlebars"
+import path from 'path';
 import mongo from "./config/mongo.js"
 
 const PORT = 3030
@@ -13,8 +15,36 @@ api.use(express.static('public'));
 api.use(express.json());
 api.use(express.urlencoded({extended: false}));
 api.use(cors());
+api.use("/css", express.static(path.join(__dirname, "node_modules/bootstrap/dist/css")))
+api.use( "/js", express.static(path.join(__dirname, "node_modules/bootstrap/dist/js")));
 
-/*-----------------------------------------------------*/
+/*------------------------HBS-----------------------------*/
+
+const hbs = exphbs.create({
+  defaultLayout: "main",
+  layoutsDir: path.join(__dirname, "views/layouts"),
+  partialsDir: path.join(__dirname, "views/partials"),
+  helpers: {
+    errBelowInput: function (arrWarnings, inputName) {
+      if (!arrWarnings) return null;
+      const warning = arrWarnings.find((el) => el.param === inputName);
+      if (warning == undefined) {
+        return null;
+      } else {
+        return `
+       <div class="alert alert-danger mt-1" role="alert">
+       ${warning.msg}
+       </div>
+        `;
+      }
+    },
+  },
+});
+
+api.set("views", "./views");
+api.engine("handlebars", hbs.engine);
+api.set("view engine", "handlebars");
+/*--------------------------------------------------------------------------------*/
 
 api.use("/api/users", usersRouter)
 api.use("/api/posts", postsRouter)

@@ -1,0 +1,55 @@
+<section class="mt-5 container">
+  <div class="row justify-content-center">
+    <h2 class="text-center my-5">Password Recovery</h2>
+    <div class="col-10 col-lg-5">
+      <form
+        class="border border-dark rounded p-4"
+        action="/api/users/reset/{{token}}"
+        method="post"
+      >
+        <input
+          class="form-control mt-3"
+          type="password"
+          maxlength="16"
+          placeholder="Type new password"
+          autocomplete="new-password"
+          name="password_1"
+          autofocus
+        />
+
+        {{#errBelowInput arrWarnings "password_1"}}
+
+          {{msg}}
+
+        {{/errBelowInput}}
+
+        <div id="passwordHelpBlock" class="form-text mb-4">
+          Your password must be 8-16 characters long.
+        </div>
+        <input
+          class="form-control"
+          type="password"
+          maxlength="16"
+          placeholder="Repeat new password"
+          autocomplete="new-password"
+          name="password_2"
+        />
+
+        {{#errBelowInput arrWarnings "password_2"}}
+          {{msg}}
+        {{/errBelowInput}}
+
+        <div id="repeatPasswordHelpBlock" class="form-text mb-5">
+          Both passwords must be identical.
+        </div>
+        <div class="d-flex justify-content-center">
+          <input
+            type="submit"
+            class="btn btn-success"
+            value="send new password"
+          />
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
