@@ -1,12 +1,13 @@
 import { json, query } from "express";
-import token from "../utils/handleJWT.js";
-
+import jwt from "../utils/handleJWT.js";
 import Post from "./postsModel.js";
 
 
-const createNewPost =  (req, res, next) => {
+const createNewPost = async (req, res, next) => {
+    const authToken = req.headers.authorization.split(" ").pop()
+    const tokenStatus = await jwt.tokenVerify(authToken);
     const newPost = new Post({ ...req.body });
-    
+
     newPost.save ( async (error) => {
       if (error) return next(error);
       const resultado = await Post.aggregate([
@@ -18,17 +19,15 @@ const createNewPost =  (req, res, next) => {
           as: "authorUser"
         }
       },
-      {$unwind:"$authorUser"},  
-      
+      {$unwind:"$authorUser"},        
     ])
-res.status(200).json({ message: "New post saved"});
+res.status(200).json({ message: `${tokenStatus.userName}, ya publicamos tu posteo!`});
     }); 
 }
-
+/*--------------------------------------------------------------------------------------*/
 
 
 const listAllPosts = async (req, res, next) => {
-  console.log(req.params);
   const data = await Post.find()
   if (!data.length) {
    next()
@@ -42,17 +41,13 @@ const listAllPosts = async (req, res, next) => {
         as: "user"
       }
     },
-    {$unwind:"$user"},
-    
+    {$unwind:"$user"},    
   ],  
   )
-    
-    res.status(200).json({postWithUser})
-    
+   res.status(200).json(postWithUser) 
   }
-
-
 }
+/*--------------------------------------------------------------------------------------*/
 
 
 const findByTitle = (req, res, next) => {
@@ -67,11 +62,36 @@ const findByTitle = (req, res, next) => {
     }
   });
 };
+/*--------------------------------------------------------------------------------------*/
+
+
+const getMyPosts = async (req, res, next) => {
+  const authToken = req.headers.authorization.split(" ").pop()
+  const tokenStatus = await jwt.tokenVerify(authToken);
+  console.log("hola");
+
+  const posts = await Post.find().where({ author: tokenStatus.id });
+  console.log(tokenStatus.id);
+  if(!posts.length)return next()
+  res.status(200).json(posts)
+}
+/*--------------------------------------------------------------------------------------*/
+
+
+const deletePost = async (req, res, next) => {
+  const post = await Post.findByIdAndDelete(req.params.id);
+  if(!post){
+    next()
+  } else return res.json({message:"Posteo eliminado"})
+}
+
 
 const postsController = {
     createNewPost,
     listAllPosts,
-    findByTitle
+    findByTitle,
+    getMyPosts,
+    deletePost
 }
 
 export default postsController

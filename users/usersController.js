@@ -52,6 +52,7 @@ const loginUser = async (req, res, next) => {
   }
   //token
  const userToken = {
+  id: user[0].id,
   fullName: user[0].fullName,
   userName: user[0].userName, 
  }

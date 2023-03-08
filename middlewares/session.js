@@ -15,6 +15,7 @@ if(verifiedToken instanceof Error) {
     error.message = "Invalid token";
     return next(error);
   }
+  
   next();
 }
 

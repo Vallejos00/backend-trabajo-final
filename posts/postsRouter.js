@@ -6,6 +6,8 @@ import postsController from "./postsController.js";
 postsRouter.get("/", postsController.listAllPosts);
 postsRouter.post("/", isAuth, postsController.createNewPost);
 postsRouter.get("/:query", postsController.findByTitle);
+postsRouter.get("/myposts", isAuth, postsController.getMyPosts)
+postsRouter.delete("/myposts/:id", isAuth, postsController.deletePost)
 
 
 
