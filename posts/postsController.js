@@ -50,9 +50,9 @@ const listAllPosts = async (req, res, next) => {
 /*--------------------------------------------------------------------------------------*/
 
 
-const findByTitle = (req, res, next) => {
+const findPost =  (req, res, next) => {
   const { query } = req.params;
-  Post.find({ $text: { $search: query } }, (err, result) => {
+  Post.find( { $text: { $search: query } }, (err, result) => {
     if (err){
       next()
     } else if(!result.length){
@@ -68,10 +68,9 @@ const findByTitle = (req, res, next) => {
 const getMyPosts = async (req, res, next) => {
   const authToken = req.headers.authorization.split(" ").pop()
   const tokenStatus = await jwt.tokenVerify(authToken);
-  console.log("hola");
 
   const posts = await Post.find().where({ author: tokenStatus.id });
-  console.log(tokenStatus.id);
+  console.log(tokenStatus);
   if(!posts.length)return next()
   res.status(200).json(posts)
 }
@@ -89,7 +88,7 @@ const deletePost = async (req, res, next) => {
 const postsController = {
     createNewPost,
     listAllPosts,
-    findByTitle,
+    findPost,
     getMyPosts,
     deletePost
 }

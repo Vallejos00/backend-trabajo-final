@@ -3,7 +3,7 @@ const {Schema, model} = mongoose
 
 const userSchema = new Schema({
     fullName: {type: String, required: true,},
-    userName: {type: String, required: true},
+    userName: {type: String, required: true, index: true},
     email: {type: String, required: true, lowercase: true, trim: true, unique: true, match     : [/.+\@.+\..+/]},
     profilePic: {type: String, default: ""},         
     password: {type: String, required: true},
@@ -19,6 +19,8 @@ userSchema.set("toJSON", {
         delete ret.password
     }
 })
+
+userSchema.index({ userName: "text" })
 
 const User = model("User", userSchema)
 

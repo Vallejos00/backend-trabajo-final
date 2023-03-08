@@ -27,6 +27,7 @@ const createUser = async(req, res, next) => {
     }
     const user = await User.find().where({userName: req.body.userName})
     const userToken = {
+      id: user[0].id,
       fullName: user[0].fullName,
       userName: user[0].userName,      
      }    
@@ -64,45 +65,78 @@ const loginUser = async (req, res, next) => {
 const editUserData = async (req, res, next) => {
     try {    
         const user = await User.findByIdAndUpdate( req.params.id, req.body, { new: true }, );
-        console.log(req.body);
-        res.status(200).json({ message: "usuario con cambios", usuario: user });
+        const newUser = await User.find().where({userName : req.body.userName})
+        const userToken = {
+          id: newUser[0].id,
+          fullName: newUser[0].fullName,
+          userName: newUser[0].userName, 
+        }
+        const accesToken = await jwt.tokenSign(userToken, "1h")
+        res.status(200).json({message: "usuario con cambios y nuevo token", token: accesToken, user: userToken})
+        
       } catch (error) {
-        next();   
+        console.log(error);   
       }
     };
 /*--------------------------------------------------------------------------------------*/
 
-    const editUserPic = async (req, res, next) => {
-      const user = await User.findById(req.params.id)
-      function obtenerSubcadena(str) {
-        let index = str.indexOf("storage")
-        if (index != -1) {
-         return str.substring(index)
-       } else {
-         return next()
-        }
-       }
-       const pathPic = `public/${obtenerSubcadena(user.profilePic)}`
-       fs.unlink(pathPic, (err) => { 
-        if (err) return console.log("No hay Imagen");;
-        console.log("user picture deleted");
-      })
-   try {
-     let newProfilePic = req.body
-     if(req.file && req.file.filename){
-       newProfilePic.profilePic = `http://localhost:3030/storage/${req.file.filename}`
-      const user = await User.findByIdAndUpdate( req.params.id, newProfilePic, { new: true }, )
-      
-       res.status(200).json({ message: "usuario con cambios", usuario: user });
-     } else {
-      newProfilePic.profilePic = ""
-      const user = await User.findByIdAndUpdate( req.params.id, newProfilePic, { new: true }, );
-      res.status(200).json({ message: "usuario con cambios", usuario: user });
+const editUserPic = async (req, res, next) => {
+  const user = await User.findById(req.params.id)
+  function obtenerSubcadena(str) {
+    let index = str.indexOf("storage")
+    if (index != -1) {
+     return str.substring(index)
+   } else {
+     return next()
     }
-   } catch(error){
-     next(error)
    }
-      };
+   const pathPic = `public/${obtenerSubcadena(user.profilePic)}`
+   fs.unlink(pathPic, (err) => { 
+    if (err) return console.log("No hay Imagen");;
+    console.log("user picture deleted");
+  })
+try {
+ let newProfilePic = req.body
+ if(req.file && req.file.filename){
+   newProfilePic.profilePic = `http://localhost:3030/storage/${req.file.filename}`
+  const user = await User.findByIdAndUpdate( req.params.id, newProfilePic, { new: true }, )
+  
+   res.status(200).json({ message: "usuario con cambios", usuario: user });
+ } else {
+  newProfilePic.profilePic = ""
+  const user = await User.findByIdAndUpdate( req.params.id, newProfilePic, { new: true }, );
+  res.status(200).json({ message: "usuario con cambios", usuario: user });
+}
+} catch(error){
+ next(error)
+}
+  };
+  /*--------------------------------------------------------------------------------------*/
+
+      const showMyProfile = async (req, res, next) => {
+        const authToken = req.headers.authorization.split(" ").pop()
+        const tokenStatus = await jwt.tokenVerify(authToken);
+        console.log(tokenStatus);
+
+        const user = await User.find().where({userName: tokenStatus.userName})
+        if(!user.length)return next()
+        res.status(200).json(user)
+      }
+
+ /*--------------------------------------------------------------------------------------*/
+
+      const findUser = (req, res, next) => {
+      const { query } = req.params;
+      User.find({ $text: { $search: query } }, (err, result) => {
+      if (err){
+      next()
+      } else if(!result.length){
+      next();
+      } else {
+      res.json(result)
+      }
+      });
+      }
  /*--------------------------------------------------------------------------------------*/
 
       const deleteUser = async (req, res, next) => {
@@ -206,7 +240,9 @@ const usersController = {
     editUserPic,
     forgotPass,
     reset,
-    saveNewPass
+    saveNewPass,
+    showMyProfile,
+    findUser
 }
 
 export default usersController
