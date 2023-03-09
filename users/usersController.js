@@ -82,19 +82,6 @@ const editUserData = async (req, res, next) => {
 
 const editUserPic = async (req, res, next) => {
   const user = await User.findById(req.params.id)
-  function obtenerSubcadena(str) {
-    let index = str.indexOf("storage")
-    if (index != -1) {
-     return str.substring(index)
-   } else {
-     return next()
-    }
-   }
-   const pathPic = `public/${obtenerSubcadena(user.profilePic)}`
-   fs.unlink(pathPic, (err) => { 
-    if (err) return console.log("No hay Imagen");;
-    console.log("user picture deleted");
-  })
 try {
  let newProfilePic = req.body
  if(req.file && req.file.filename){
@@ -110,6 +97,24 @@ try {
 } catch(error){
  next(error)
 }
+function obtenerSubcadena(str) {
+  let index = str.indexOf("storage")
+  if (index != -1) {
+   return str.substring(index)
+ } else {
+   return next()
+  }
+ }
+ const profilePic = user.profilePic
+ if(!profilePic){
+   console.log("No había imágen");
+  }else{
+    const pathPic = `public/${obtenerSubcadena(profilePic)}`
+   fs.unlink(pathPic, (err) => { 
+    if (err) throw err
+    console.log("user picture deleted");
+  })
+ }
   };
   /*--------------------------------------------------------------------------------------*/
 

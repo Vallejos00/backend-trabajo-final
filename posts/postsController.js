@@ -6,7 +6,7 @@ import Post from "./postsModel.js";
 const createNewPost = async (req, res, next) => {
     const authToken = req.headers.authorization.split(" ").pop()
     const tokenStatus = await jwt.tokenVerify(authToken);
-    const newPost = new Post({ ...req.body });
+    const newPost = new Post({ ...req.body  });
 
     newPost.save ( async (error) => {
       if (error) return next(error);
@@ -21,6 +21,7 @@ const createNewPost = async (req, res, next) => {
       },
       {$unwind:"$authorUser"},        
     ])
+    console.log(resultado);
 res.status(200).json({ message: `${tokenStatus.userName}, ya publicamos tu posteo!`});
     }); 
 }
@@ -44,7 +45,8 @@ const listAllPosts = async (req, res, next) => {
     {$unwind:"$user"},    
   ],  
   )
-   res.status(200).json(postWithUser) 
+   res.status(200).json({postWithUser}) 
+   console.log(postWithUser);
   }
 }
 /*--------------------------------------------------------------------------------------*/
