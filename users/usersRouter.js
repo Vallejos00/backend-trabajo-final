@@ -13,7 +13,7 @@ usersRouter.get("/myprofile", isAuth, usersController.showMyProfile)
 usersRouter.put("/myprofile/:id", isAuth, editValidator, usersController.editUserData)
 usersRouter.put("/myprofile/pic/:id", isAuth, uploadPic.single("profilePic"), usersController.editUserPic)
 usersRouter.delete("/myprofile/:id", isAuth, usersController.deleteUser) 
-usersRouter.get("/forgot-password", usersController.forgotPass)
+usersRouter.post("/forgot-password", usersController.forgotPass)
 usersRouter.get("/reset/:token", usersController.reset)
 usersRouter.post("/reset/:token", resetPassword, usersController.saveNewPass)
 

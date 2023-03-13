@@ -3,6 +3,7 @@ import handlePass from "../utils/handlePassword.js"
 import jwt from "../utils/handleJWT.js"
 import fs from "fs"
 import transporter from "../config/nodemailer.js"
+import obtenerSubcadena from "../config/subcadena.js"
 
 const getAllUsers = async(req, res, next) => {
 const data = await User.find()
@@ -11,6 +12,20 @@ if(!data.length){
 }
 res.json(data)
 }
+/*--------------------------------------------------------------------------------------*/
+
+const findUser = (req, res, next) => {
+  const { query } = req.params;
+  User.find({ $text: { $search: query } }, (err, result) => {
+  if (err){
+  next()
+  } else if(!result.length){
+  next();
+  } else {
+  res.json(result)
+  }
+  });
+  }
 /*--------------------------------------------------------------------------------------*/
 
 const createUser = async(req, res, next) => {
@@ -97,14 +112,7 @@ try {
 } catch(error){
  next(error)
 }
-function obtenerSubcadena(str) {
-  let index = str.indexOf("storage")
-  if (index != -1) {
-   return str.substring(index)
- } else {
-   return next()
-  }
- }
+
  const profilePic = user.profilePic
  if(!profilePic){
    console.log("No había imágen");
@@ -130,32 +138,9 @@ function obtenerSubcadena(str) {
 
  /*--------------------------------------------------------------------------------------*/
 
-      const findUser = (req, res, next) => {
-      const { query } = req.params;
-      User.find({ $text: { $search: query } }, (err, result) => {
-      if (err){
-      next()
-      } else if(!result.length){
-      next();
-      } else {
-      res.json(result)
-      }
-      });
-      }
- /*--------------------------------------------------------------------------------------*/
-
       const deleteUser = async (req, res, next) => {
         const user = await User.findByIdAndDelete(req.params.id);
         if (!user.profilePic.length) return res.json({message: "Usuario eliminado"})
-        
-        function obtenerSubcadena(str) {
-         let index = str.indexOf("storage")
-         if (index != -1) {
-          return str.substring(index)
-        } else {
-          return next()
-         }
-        }
         
         const pathPic = `public/${obtenerSubcadena(user.profilePic)}`       
          fs.unlink(pathPic, (err) => { 

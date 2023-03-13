@@ -10,19 +10,8 @@ const createNewPost = async (req, res, next) => {
 
     newPost.save ( async (error) => {
       if (error) return next(error);
-      const resultado = await Post.aggregate([
-        {
-        $lookup:{
-          from: "users",
-          localField: "author",
-          foreignField: "_id",
-          as: "authorUser"
-        }
-      },
-      {$unwind:"$authorUser"},        
-    ])
-    console.log(resultado);
-res.status(200).json({ message: `${tokenStatus.userName}, ya publicamos tu posteo!`});
+
+    res.status(200).json({ message: `${tokenStatus.userName}, ya publicamos tu posteo!`});
     }); 
 }
 /*--------------------------------------------------------------------------------------*/
@@ -46,7 +35,6 @@ const listAllPosts = async (req, res, next) => {
   ],  
   )
    res.status(200).json({postWithUser}) 
-   console.log(postWithUser);
   }
 }
 /*--------------------------------------------------------------------------------------*/
@@ -72,7 +60,6 @@ const getMyPosts = async (req, res, next) => {
   const tokenStatus = await jwt.tokenVerify(authToken);
 
   const posts = await Post.find().where({ author: tokenStatus.id });
-  console.log(tokenStatus);
   if(!posts.length)return next()
   res.status(200).json(posts)
 }
