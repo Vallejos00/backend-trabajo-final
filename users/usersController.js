@@ -57,6 +57,7 @@ const loginUser = async (req, res, next) => {
   if(!user.length) {
     let error = new Error("Usuario o contraseña inválido")
     error.status = 401
+    console.log(error);
     return next(error)
   } 
   const hashedPassword = user[0].password
@@ -73,6 +74,7 @@ const loginUser = async (req, res, next) => {
   userName: user[0].userName, 
  }
   const accesToken = await jwt.tokenSign(userToken, "1h")
+  console.log(accesToken);
   res.status(200).json({message: "Se pudo acceder correctamente", token: accesToken, user: userToken})
 }
 /*--------------------------------------------------------------------------------------*/

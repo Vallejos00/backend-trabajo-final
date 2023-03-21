@@ -34,7 +34,7 @@ const listAllPosts = async (req, res, next) => {
     {$unwind:"$user"},    
   ],  
   )
-   res.status(200).json({postWithUser}) 
+   res.status(200).json(postWithUser) 
   }
 }
 /*--------------------------------------------------------------------------------------*/
