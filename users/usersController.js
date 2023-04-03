@@ -75,7 +75,7 @@ const loginUser = async (req, res, next) => {
  }
   const accesToken = await jwt.tokenSign(userToken, "1h")
   console.log(accesToken);
-  res.status(200).json({message: "Se pudo acceder correctamente", token: accesToken, user: userToken})
+  res.status(200).json({message: "Se pudo acceder correctamente", token: accesToken, user: [userToken.fullName, userToken.userName, userToken.id, accesToken]})
 }
 /*--------------------------------------------------------------------------------------*/
 
