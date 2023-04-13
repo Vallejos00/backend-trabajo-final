@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 const {Schema, model} = mongoose
 
-const PostSchema = Schema({
-    body: { type: String, required: true },
+const PostSchema = new Schema({
+    body: { type: String, required: true, trim: true},
     author: {type: mongoose.Types.ObjectId, required: true},
     date: { type: Date, default: Date.now },
    
