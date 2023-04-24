@@ -4,5 +4,5 @@ Las sesiones estan verificadas a través de JWT.
 
 ----------------------------------------------------------------------------------------------------------------
 
-This projetc is a backend that works with MongoDB. This backend is for blog-style projects. It has the CRUD basic functionality both for users and for posts.
+This is a backend project that works with MongoDB. This backend is for blog-style projects. It has the CRUD basic functionality both for users and for posts.
 Sessions are verified through JWT. 
