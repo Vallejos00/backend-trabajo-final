@@ -38,8 +38,15 @@ const listAllPosts = async (req, res, next) => {
   }
 }
 /*--------------------------------------------------------------------------------------*/
+const listUserPost = async (req, res, next) => {
+  const id = req.params.id
+  const posts = await Post.find().where({author: id})
+  if(!posts.length)return next()
+  res.status(200).json(posts)
 
 
+}
+/*--------------------------------------------------------------------------------------*/
 const findPost =  (req, res, next) => {
   const { query } = req.params;
   Post.find( { $text: { $search: query } }, (err, result) => {
@@ -49,11 +56,10 @@ const findPost =  (req, res, next) => {
       next();
     } else {
       res.json(result)
-    }
+    } 
   });
 };
 /*--------------------------------------------------------------------------------------*/
-
 
 const getMyPosts = async (req, res, next) => {
   const authToken = req.headers.authorization.split(" ").pop()
@@ -77,9 +83,10 @@ const deletePost = async (req, res, next) => {
 const postsController = {
     createNewPost,
     listAllPosts,
+    listUserPost,
     findPost,
-    getMyPosts,
-    deletePost
+    deletePost,
+    getMyPosts
 }
 
 export default postsController
