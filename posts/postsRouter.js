@@ -7,7 +7,7 @@ postsRouter.get("/", postsController.listAllPosts);
 postsRouter.post("/", isAuth, postsController.createNewPost);
 postsRouter.get("/profile/:id", postsController.listUserPost)
 postsRouter.get("/:query", postsController.findPost);
-postsRouter.get("/myposts", isAuth, postsController.getMyPosts)
+postsRouter.get("/myposts/data", isAuth, postsController.getMyPosts)
 postsRouter.delete("/myposts/:id", isAuth, postsController.deletePost)
 
 

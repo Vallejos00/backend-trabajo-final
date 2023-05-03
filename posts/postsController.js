@@ -49,16 +49,16 @@ const listUserPost = async (req, res, next) => {
 /*--------------------------------------------------------------------------------------*/
 const findPost =  (req, res, next) => {
   const { query } = req.params;
-  Post.find( { $text: { $search: query } }, (err, result) => {
+   Post.find( { $text: { $search: query } }, (err, result) => {
     if (err){
       next()
     } else if(!result.length){
       next();
-    } else {
-      res.json(result)
-    } 
-  });
+    }
+    res.json(result);
+  })
 };
+
 /*--------------------------------------------------------------------------------------*/
 
 const getMyPosts = async (req, res, next) => {
@@ -66,8 +66,12 @@ const getMyPosts = async (req, res, next) => {
   const tokenStatus = await jwt.tokenVerify(authToken);
 
   const posts = await Post.find().where({ author: tokenStatus.id });
-  if(!posts.length)return next()
-  res.status(200).json(posts)
+  if(!posts.length){
+    next()
+  } else {
+   res.status(200).json(posts) 
+  }
+  
 }
 /*--------------------------------------------------------------------------------------*/
 
