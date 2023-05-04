@@ -1,6 +1,7 @@
 import { json, query } from "express";
 import jwt from "../utils/handleJWT.js";
 import Post from "./postsModel.js";
+import User from "../users/usersModel.js"
 
 
 const createNewPost = async (req, res, next) => {
@@ -47,17 +48,24 @@ const listUserPost = async (req, res, next) => {
 
 }
 /*--------------------------------------------------------------------------------------*/
-const findPost =  (req, res, next) => {
+const findPost = async (req, res, next) => {
   const { query } = req.params;
-   Post.find( { $text: { $search: query } }, (err, result) => {
-    if (err){
-      next()
-    } else if(!result.length){
-      next();
+  const postWithUser = await Post.aggregate([
+    {
+    $lookup:{
+      from: "users",
+      localField: "author",
+      foreignField: "_id",
+      as: "user"
     }
-    res.json(result);
-  })
-};
+  },
+  {$unwind:"$user"},    
+],  
+)
+  const busqueda = postWithUser.filter((post)=> post.body.toLowerCase().includes(query))    
+  if(!busqueda.length) return next()
+  res.status(200).json(busqueda)
+}
 
 /*--------------------------------------------------------------------------------------*/
 
