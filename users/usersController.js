@@ -47,7 +47,7 @@ const createUser = async(req, res, next) => {
       userName: user[0].userName,      
      }    
       const accesToken = await jwt.tokenSign(userToken, "30m")
-      res.status(200).json({message: "Usuario creado correctamente", token: accesToken, user: userToken})
+      res.status(200).json({message: "Usuario creado correctamente", token: accesToken, user: {id:userToken.id, fullName: userToken.fullName, userName: userToken.userName, token: accesToken}})
  })
 }
 /*--------------------------------------------------------------------------------------*/
