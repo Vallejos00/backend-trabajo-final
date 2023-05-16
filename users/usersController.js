@@ -4,6 +4,7 @@ import jwt from "../utils/handleJWT.js"
 import fs from "fs"
 import transporter from "../config/nodemailer.js"
 import obtenerSubcadena from "../config/subcadena.js"
+import { log } from "console"
 
 const getAllUsers = async(req, res, next) => {
 const data = await User.find()
@@ -100,7 +101,7 @@ const editUserPic = async (req, res, next) => {
   const user = await User.findById(req.params.id)
 try {
  let newProfilePic = req.body
- if(req.file && req.file.filename){
+ if(req.file && req.file.filename){ 
    newProfilePic.profilePic = `http://localhost:3030/storage/${req.file.filename}`
   const user = await User.findByIdAndUpdate( req.params.id, newProfilePic, { new: true }, )
   

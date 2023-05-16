@@ -5,6 +5,7 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
+
         const pathStorage = `${__dirname}../public/storage`;
         cb(null, pathStorage);
       },
@@ -12,11 +13,14 @@ const storage = multer.diskStorage({
         const ext = file.originalname.split(".").pop(); 
         const filename = `usrPic_${Date.now()}.${ext}`;
         cb(null, filename);
-      },
+      },  
 })
 
 const uploadPic = multer({
     storage: storage,
+    limits: {
+      fileSize: Infinity   // Tamaño máximo de archivo ilimitado
+    },
     fileFilter: (req, file, cb) => {
       if (
         file.mimetype == "image/png" ||
@@ -25,6 +29,7 @@ const uploadPic = multer({
         !file  
       ) {
         cb(null, true);
+        console.log("??");
       } else {
         cb(null, false);
         return cb(new Error("Warning: Only .png, .jpg and .jpeg format allowed!"));

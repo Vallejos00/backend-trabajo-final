@@ -8,15 +8,14 @@ import postsRouter from './posts/postsRouter.js';
 import exphbs from "express-handlebars"
 import path from 'path';
 import mongo from "./config/mongo.js"
+import uploadPic from './utils/handleStorage.js';
 
 const PORT = 3030
 const api = express()
-api.use(express.static('public'));
-api.use(express.json({
-  type: "*/*"
-}));
-api.use(express.urlencoded({extended: true}));
 api.use(cors());
+api.use(express.static('public'));
+api.use(express.json());
+api.use(express.urlencoded());
 api.use("/css", express.static(path.join(__dirname, "node_modules/bootstrap/dist/css")))
 api.use( "/js", express.static(path.join(__dirname, "node_modules/bootstrap/dist/js")));
 
